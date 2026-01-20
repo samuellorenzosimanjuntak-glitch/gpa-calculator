@@ -1,184 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>GPA Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<title>Kalkulator IP</title>
 
-        h1 {
-            text-align: center;
-        }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
 
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
+.container {
+  max-width: 700px;
+  background: #fff;
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+}
 
-        .input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
 
-        input, select, button {
-            padding: 8px;
-            font-size: 14px;
-        }
+input, select, button {
+  padding: 8px;
+  font-size: 14px;
+}
 
-        button {
-            cursor: pointer;
-        }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
+th {
+  background: #eee;
+}
 
-        th {
-            background: #eee;
-        }
+.remove-btn {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+}
 
-        .results {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-        }
-
-        .remove-btn {
-            color: white;
-            background: #d9534f;
-            border: none;
-            padding: 5px 8px;
-            border-radius: 4px;
-        }
-    </style>
+.results {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+</style>
 </head>
+
 <body>
-
 <div class="container">
-    <h1>GPA Calculator</h1>
+  <h2>Kalkulator IP</h2>
 
-    <div class="input-row">
-        <input type="text" id="courseName" placeholder="Course Name">
-        <input type="number" id="credits" placeholder="Credits" min="0.1" step="0.1">
-        <select id="grade">
-            <option value="A">A</option>
-            <option value="AB">AB</option>
-            <option value="B">B</option>
-            <option value="BC">BC</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="E">E</option>
-        </select>
-        <button onclick="addCourse()">Add Course</button>
-    </div>
+  <div class="input-row">
+    <input id="courseName" placeholder="Mata Kuliah">
+    <input id="credits" type="number" placeholder="SKS" min="0.1" step="0.1">
+    <select id="grade">
+      <option>A</option>
+      <option>AB</option>
+      <option>B</option>
+      <option>BC</option>
+      <option>C</option>
+      <option>D</option>
+      <option>E</option>
+    </select>
+    <button onclick="addCourse()">Tambah Mata Kuliah</button>
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Credits</th>
-                <th>Grade</th>
-                <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody id="courseTable"></tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Mata Kuliah</th>
+        <th>SKS</th>
+        <th>Nilai</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="courseTable"></tbody>
+  </table>
 
-    <div class="results">
-        <div id="totalCredits">Total Credits: 0</div>
-        <div id="gpa">GPA: --</div>
-    </div>
+  <div class="results">
+    <div id="totalCredits">Total SKS: 0</div>
+    <div id="gpa">IP: --</div>
+  </div>
 </div>
 
 <script>
-    const GRADE_VALUES = {
-        A: 4.0,
-        AB: 3.5,
-        B: 3.0,
-        BC: 2.5,
-        C: 2.0,
-        D: 1.0,
-        E: 0.0
-    };
+var GRADE_VALUES = {A:4, AB:3.5, B:3, BC:2.5, C:2, D:1, E:0};
+var courses = [];
 
-    let courses = [];
+function addCourse() {
+  var name = document.getElementById("courseName").value.trim();
+  var credits = parseFloat(document.getElementById("credits").value);
+  var grade = document.getElementById("grade").value;
 
-    function addCourse() {
-        const name = document.getElementById("courseName").value.trim();
-        const credits = parseFloat(document.getElementById("credits").value);
-        const grade = document.getElementById("grade").value;
+  if (!name) {
+    alert("Nama mata kuliah tidak boleh kosong.");
+    return;
+  }
 
-        if (!name) {
-            alert("Course name is required.");
-            return;
-        }
+  if (isNaN(credits) || credits <= 0) {
+    alert("SKS harus berupa angka dan lebih dari 0.");
+    return;
+  }
 
-        if (isNaN(credits) || credits <= 0) {
-            alert("Credits must be a positive number.");
-            return;
-        }
+  courses.push({name:name, credits:credits, grade:grade});
+  document.getElementById("courseName").value = "";
+  document.getElementById("credits").value = "";
+  render();
+}
 
-        courses.push({ name, credits, grade });
-        renderTable();
+function removeCourse(index) {
+  courses.splice(index, 1);
+  render();
+}
 
-        document.getElementById("courseName").value = "";
-        document.getElementById("credits").value = "";
-    }
+function render() {
+  var table = document.getElementById("courseTable");
+  table.innerHTML = "";
 
-    function removeCourse(index) {
-        courses.splice(index, 1);
-        renderTable();
-    }
+  var totalCredits = 0;
+  var totalWeighted = 0;
 
-    function renderTable() {
-        const table = document.getElementById("courseTable");
-        table.innerHTML = "";
+  for (var i = 0; i < courses.length; i++) {
+    var c = courses[i];
+    totalCredits += c.credits;
+    totalWeighted += c.credits * GRADE_VALUES[c.grade];
 
-        let totalCredits = 0;
-        let totalWeighted = 0;
+    var row = document.createElement("tr");
 
-        courses.forEach((course, index) => {
-            totalCredits += course.credits;
-            totalWeighted += course.credits * GRADE_VALUES[course.grade];
+    row.innerHTML =
+      "<td>" + c.name + "</td>" +
+      "<td>" + c.credits + "</td>" +
+      "<td>" + c.grade + "</td>" +
+      "<td><button class='remove-btn' onclick='removeCourse(" + i + ")'>X</button></td>";
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${course.name}</td>
-                <td>${course.credits}</td>
-                <td>${course.grade}</td>
-                <td>
-                    <button class="remove-btn" onclick="removeCourse(${index})">
-                        X
-                    </button>
-                </td>
-            `;
-            table.appendChild(row);
-        });
+    table.appendChild(row);
+  }
 
-        document.getElementById("totalCredits").textContent =
-            `Total Credits: ${totalCredits}`;
+  document.getElementById("totalCredits").textContent =
+    "Total SKS: " + totalCredits;
 
-        document.getElementById("gpa").textContent =
-            totalCredits === 0 ? "GPA: --" : `GPA: ${(totalWeighted / totalCredits).toFixed(2)}`;
-    }
+  document.getElementById("gpa").textContent =
+    totalCredits === 0
+      ? "IP: --"
+      : "IP: " + (totalWeighted / totalCredits).toFixed(2);
+}
 </script>
-
 </body>
 </html>
