@@ -7,17 +7,18 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
+  background: #f5f7fa;
+  color: #222;
   padding: 20px;
 }
 
 .container {
   max-width: 700px;
-  background: #111;
+  background: #ffffff;
   margin: auto;
   padding: 20px;
   border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 .input-row {
@@ -30,17 +31,25 @@ body {
 input, select, button {
   padding: 8px;
   font-size: 14px;
-  background: #222;
-  color: #fff;
-  border: 1px solid #555;
+  background: #ffffff;
+  color: #222;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 input::placeholder {
-  color: #bbb;
+  color: #888;
 }
 
 button {
   cursor: pointer;
+  background: #4a90e2;
+  color: white;
+  border: none;
+}
+
+button:hover {
+  background: #357abd;
 }
 
 table {
@@ -50,21 +59,26 @@ table {
 }
 
 th, td {
-  border: 1px solid #555;
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
 th {
-  background: #222;
+  background: #f0f2f5;
 }
 
 .remove-btn {
-  background: #d9534f;
+  background: #e74c3c;
   color: white;
   border: none;
   padding: 4px 6px;
   cursor: pointer;
+  border-radius: 4px;
+}
+
+.remove-btn:hover {
+  background: #c0392b;
 }
 
 .results {
@@ -115,6 +129,7 @@ th {
 
 <script>
 var GRADE_VALUES = {A:4, AB:3.5, B:3, BC:2.5, C:2, D:1, E:0};
+var GRADE_OPTIONS = ["A","AB","B","BC","C","D","E"];
 var courses = [];
 
 function addCourse() {
@@ -143,10 +158,39 @@ function removeCourse(index) {
   render();
 }
 
+function updateGrade(index, newGrade) {
+  courses[index].grade = newGrade;
+  renderResults();
+}
+
 function render() {
   var table = document.getElementById("courseTable");
   table.innerHTML = "";
 
+  for (var i = 0; i < courses.length; i++) {
+    var c = courses[i];
+    var row = document.createElement("tr");
+
+    var gradeSelect = "<select onchange='updateGrade(" + i + ", this.value)'>";
+    for (var g = 0; g < GRADE_OPTIONS.length; g++) {
+      var selected = GRADE_OPTIONS[g] === c.grade ? "selected" : "";
+      gradeSelect += "<option " + selected + ">" + GRADE_OPTIONS[g] + "</option>";
+    }
+    gradeSelect += "</select>";
+
+    row.innerHTML =
+      "<td>" + c.name + "</td>" +
+      "<td>" + c.credits + "</td>" +
+      "<td>" + gradeSelect + "</td>" +
+      "<td><button class='remove-btn' onclick='removeCourse(" + i + ")'>X</button></td>";
+
+    table.appendChild(row);
+  }
+
+  renderResults();
+}
+
+function renderResults() {
   var totalCredits = 0;
   var totalWeighted = 0;
 
@@ -154,16 +198,6 @@ function render() {
     var c = courses[i];
     totalCredits += c.credits;
     totalWeighted += c.credits * GRADE_VALUES[c.grade];
-
-    var row = document.createElement("tr");
-
-    row.innerHTML =
-      "<td>" + c.name + "</td>" +
-      "<td>" + c.credits + "</td>" +
-      "<td>" + c.grade + "</td>" +
-      "<td><button class='remove-btn' onclick='removeCourse(" + i + ")'>X</button></td>";
-
-    table.appendChild(row);
   }
 
   document.getElementById("totalCredits").textContent =
